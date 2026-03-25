@@ -574,10 +574,48 @@ canvas#balanceChart{width:100%;height:130px;}
 }
 .login-user-name{font-size:.52rem;color:var(--gold2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-.crash-hist-label2{font-size:.48rem;color:rgba(255,255,255,.45);width:42px;flex-shrink:0;text-align:right;}
+/* ADMIN PANEL */
+.admin-card{background:rgba(0,0,0,.35);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:12px;margin-bottom:10px;}
+.admin-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.admin-username{font-size:.8rem;font-weight:700;color:var(--gold2);}
+.admin-balance{font-size:.65rem;color:var(--win);font-weight:700;}
+.admin-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.admin-btn{padding:6px 10px;border-radius:7px;border:1px solid;font-family:'Space Mono',monospace;font-size:.5rem;cursor:pointer;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:all .18s;}
+.admin-btn.give{border-color:rgba(39,199,111,.35);background:rgba(39,199,111,.08);color:var(--win);}
+.admin-btn.give:hover{background:rgba(39,199,111,.18);}
+.admin-btn.take{border-color:rgba(224,48,48,.35);background:rgba(224,48,48,.08);color:var(--red);}
+.admin-btn.take:hover{background:rgba(224,48,48,.18);}
+.admin-btn.del{border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.08);color:#a855f7;}
+.admin-btn.del:hover{background:rgba(168,85,247,.18);}
+.admin-btn.reset{border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.08);color:#f97316;}
+.admin-btn.reset:hover{background:rgba(249,115,22,.18);}
+.admin-input{width:75px;padding:5px 8px;border-radius:6px;border:1px solid rgba(201,168,76,.25);background:rgba(0,0,0,.4);color:var(--cream);font-family:'Space Mono',monospace;font-size:.58rem;}
+.admin-stat{font-size:.44rem;color:rgba(255,255,255,.28);margin-top:5px;line-height:1.6;}
+
+{font-size:.48rem;color:rgba(255,255,255,.45);width:42px;flex-shrink:0;text-align:right;}
 .crash-hist-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden;}
 .crash-hist-bar{height:100%;border-radius:5px;transition:width .4s ease;min-width:2px;}
 .crash-hist-count{font-size:.52rem;font-weight:700;width:56px;flex-shrink:0;text-align:right;}
+
+/* ROULETTE */
+.rl-ob{padding:7px 3px;border-radius:7px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:var(--cream);cursor:pointer;font-family:'Space Mono',monospace;font-size:.5rem;text-align:center;transition:all .15s;line-height:1.4;width:100%;}
+.rl-ob:hover{background:rgba(255,255,255,.09);}
+.rl-ob.sel{background:rgba(201,168,76,.18);border-color:var(--gold);color:var(--gold2);}
+.rl-nb{aspect-ratio:1;border-radius:4px;border:1px solid rgba(255,255,255,.1);font-family:'Space Mono',monospace;font-size:.48rem;font-weight:700;cursor:pointer;color:#fff;transition:all .12s;display:flex;align-items:center;justify-content:center;}
+.rl-nb.r{background:#8b1a1a;}.rl-nb.b{background:#1a1a1a;}.rl-nb.g{background:#1a6b3a;}
+.rl-nb.sel{outline:2px solid #f0d080;transform:scale(1.1);}
+/* MINES */
+.mn-cell{aspect-ratio:1;border-radius:5px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .12s;}
+.mn-cell:hover:not(.open){background:rgba(249,115,22,.2);border-color:rgba(249,115,22,.4);}
+.mn-cell.safe{background:rgba(39,199,111,.2);border-color:rgba(39,199,111,.4);cursor:default;}
+.mn-cell.bomb{background:rgba(224,48,48,.3);border-color:rgba(224,48,48,.5);cursor:default;animation:mnShake .3s;}
+.mn-cell.open{cursor:default;}
+.mn-mult{padding:7px 4px;border-radius:7px;border:1px solid rgba(249,115,22,.2);background:rgba(249,115,22,.05);cursor:pointer;text-align:center;font-family:'Space Mono',monospace;transition:all .15s;}
+.mn-mult:hover{background:rgba(249,115,22,.12);}
+.mn-mult.sel{background:rgba(249,115,22,.2);border-color:#f97316;}
+.mn-mult-v{font-size:.8rem;font-weight:700;color:#f97316;}
+.mn-mult-l{font-size:.4rem;color:rgba(255,255,255,.4);margin-top:1px;}
+@keyframes mnShake{0%,100%{transform:none;}25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
 </style>
 </head>
 <body>
@@ -634,9 +672,11 @@ canvas#balanceChart{width:100%;height:130px;}
   <button class="nav-btn active" data-screen="bj" onclick="switchScreen('bj',this)">♠ BlackJack</button>
   <button class="nav-btn" data-screen="slots" onclick="switchScreen('slots',this)">🎰 Automat</button>
   <button class="nav-btn" data-screen="crash" onclick="switchScreen('crash',this)">🚀 Crash</button>
-  <button class="nav-btn" data-screen="poker" onclick="switchScreen('poker',this)">🃏 Poker</button>
   <button class="nav-btn" data-screen="plinko" onclick="switchScreen('plinko',this)">🔮 Plinko</button>
+  <button class="nav-btn" data-screen="roulette" onclick="switchScreen('roulette',this)">🎡 Ruletka</button>
+  <button class="nav-btn" data-screen="mines" onclick="switchScreen('mines',this)">💣 Miny</button>
   <button class="nav-btn" data-screen="stats" onclick="switchScreen('stats',this)">📊 Statystyki</button>
+  <button class="nav-btn" data-screen="admin" id="nav-admin" onclick="switchScreen('admin',this)" style="display:none">⚙ Admin</button>
 </div>
 
 <!-- ═══════ BLACKJACK SCREEN ═══════ -->
@@ -671,7 +711,7 @@ canvas#balanceChart{width:100%;height:130px;}
     <button class="pause-btn" id="bj-pause-btn" onclick="bjTogglePause()">⏸ Pauza</button>
   </div>
   <div class="bets-panel">
-    <div class="bets-title">— Wybierz rynek → dodaj żeton —</div>
+    <div class="bets-title">— Naciśnij ROZDAJ KARTY, potem obstaw —</div>
     <div class="markets">
       <div class="market-group">
         <div class="market-group-title">🏆 Wynik rundy</div>
@@ -751,8 +791,8 @@ canvas#balanceChart{width:100%;height:130px;}
       </div>
     </div>
     <div class="action-row">
-      <button class="btn-clear" id="bj-clear-btn" onclick="bjClearBets()">Wyczyść</button>
-      <button class="btn-start" id="bj-start-btn" onclick="bjStartRound()" disabled>▶ START</button>
+      <button class="btn-clear" id="bj-clear-btn" onclick="bjClearBets()" disabled>Wyczyść</button>
+      <button class="btn-start" id="bj-start-btn" onclick="bjStartRound()">▶ ROZDAJ KARTY</button>
     </div>
   </div>
   <div class="history-wrap">
@@ -775,6 +815,16 @@ canvas#balanceChart{width:100%;height:130px;}
     </div>
     <div class="slot-win-line" id="slot-win-line"></div>
     <div class="slot-msg" id="slot-msg">Naciśnij SPIN!</div>
+    <div class="controls-bar" style="margin:0 -16px 10px;border-radius:0">
+      <div class="speed-group">
+        <span class="speed-label">Tempo:</span>
+        <button class="speed-btn" onclick="slotSetSpeed(1800,this)">🐢</button>
+        <button class="speed-btn active" onclick="slotSetSpeed(300,this)">▶</button>
+        <button class="speed-btn" onclick="slotSetSpeed(80,this)">⚡</button>
+        <button class="speed-btn" onclick="slotSetSpeed(10,this)">🚀</button>
+      </div>
+      <div style="font-size:.46rem;color:rgba(201,168,76,.35);letter-spacing:.1em">PRĘDKOŚĆ</div>
+    </div>
     <div class="slot-bet-row">
       <span class="slot-bet-label">Zakład:</span>
       <div class="slot-bet-btns">
@@ -824,7 +874,7 @@ canvas#balanceChart{width:100%;height:130px;}
     </div>
     <div class="crash-row">
       <span class="crash-label">Auto Cash:</span>
-      <input type="number" class="crash-input" id="crash-auto-input" value="2.00" step="0.1" min="1.1" max="100">
+      <input type="number" class="crash-input" id="crash-auto-input" value="3.00" step="0.1" min="1.1" max="100">
       <span style="font-size:.5rem;color:rgba(255,255,255,.3);margin-left:4px;">×</span>
     </div>
     <div class="crash-row">
@@ -835,38 +885,6 @@ canvas#balanceChart{width:100%;height:130px;}
       <div class="crash-hist-label">Ostatnie rundy:</div>
       <div class="crash-hist" id="crash-hist"></div>
     </div>
-  </div>
-</div>
-
-<!-- ═══════ POKER SCREEN ═══════ -->
-<div class="screen" id="screen-poker">
-  <div class="poker-table">
-    <div class="poker-title">🃏 VIDEO POKER</div>
-    <div class="poker-subtitle">— Jacks or Better —</div>
-    <div class="poker-cards" id="poker-cards"></div>
-    <div class="poker-hand-name" id="poker-hand-name">— Postaw i rozdaj —</div>
-    <div class="poker-result" id="poker-result"></div>
-    <div class="poker-paytable">
-      <div class="poker-pt-title">— Tabela wypłat —</div>
-      <div class="poker-pt-grid" id="poker-pt-grid"></div>
-    </div>
-    <div class="poker-actions">
-      <div class="poker-bet-row">
-        <button class="poker-bet-btn active" onclick="pokerSetBet(10,this)">$10</button>
-        <button class="poker-bet-btn" onclick="pokerSetBet(25,this)">$25</button>
-        <button class="poker-bet-btn" onclick="pokerSetBet(50,this)">$50</button>
-        <button class="poker-bet-btn" onclick="pokerSetBet(100,this)">$100</button>
-        <button class="poker-bet-btn" onclick="pokerAllIn()" style="color:#f97316;border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.08)">ALL IN 🔥</button>
-      </div>
-      <div style="display:flex;gap:6px;margin-bottom:4px;">
-        <input type="number" id="poker-custom-input" class="plinko-custom-input" placeholder="Własna kwota..." min="1" oninput="pokerSetCustom(this)" style="border-color:rgba(39,199,111,.25)">
-      </div>
-      <div class="poker-action-btns">
-        <button class="poker-btn deal" id="poker-deal-btn" onclick="pokerDeal()">🃏 ROZDAJ</button>
-        <button class="poker-btn draw" id="poker-draw-btn" onclick="pokerDraw()" disabled>🔄 DOBIERZ</button>
-      </div>
-    </div>
-    <div class="poker-hist" id="poker-hist"></div>
   </div>
 </div>
 
@@ -925,12 +943,6 @@ canvas#balanceChart{width:100%;height:130px;}
     <div id="crash-detail-stats" style="padding:4px 0"></div>
   </div>
 
-  <!-- Poker hand stats -->
-  <div class="streak-wrap" style="margin-bottom:12px">
-    <div class="streak-title">🃏 Poker — Układy kart</div>
-    <div id="poker-detail-stats" style="padding:4px 0"></div>
-  </div>
-
   <!-- Plinko bucket stats -->
   <div class="streak-wrap" style="margin-bottom:12px">
     <div class="streak-title">🔮 Plinko — Trafienia w kubełki</div>
@@ -944,6 +956,15 @@ canvas#balanceChart{width:100%;height:130px;}
   <div style="display:flex;gap:8px;margin-top:6px;">
     <button class="reset-btn" onclick="resetAll()" style="flex:1">🗑 Resetuj statystyki</button>
     <button class="reset-btn" onclick="resetBalance()" style="flex:1;border-color:rgba(201,168,76,.3);color:var(--gold2);background:rgba(201,168,76,.06)">💰 Resetuj saldo ($1000)</button>
+  </div>
+</div>
+
+<!-- ═══════ ADMIN SCREEN ═══════ -->
+<div class="screen" id="screen-admin">
+  <div style="padding:14px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.1em;color:var(--red);text-align:center;margin-bottom:4px">⚙ PANEL ADMINA</div>
+    <div style="font-size:.46rem;color:rgba(255,255,255,.3);letter-spacing:.2em;text-align:center;margin-bottom:16px;text-transform:uppercase">Zarządzanie kontami graczy</div>
+    <div id="admin-user-list"></div>
   </div>
 </div>
 
@@ -963,6 +984,116 @@ canvas#balanceChart{width:100%;height:130px;}
 <div class="pause-overlay" id="bj-pause-overlay">
   <div class="pause-title">⏸ PAUZA</div>
   <div class="pause-sub">kliknij przycisk aby kontynuować</div>
+</div>
+
+
+<!-- ═══════ ROULETTE SCREEN ═══════ -->
+<div class="screen" id="screen-roulette">
+<div style="padding:14px;overflow-y:auto">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.15em;color:#e03030;text-align:center;margin-bottom:2px;text-shadow:0 0 20px rgba(224,48,48,.4)">🎡 RULETKA</div>
+  <div style="font-size:.44rem;color:rgba(224,48,48,.4);text-align:center;letter-spacing:.3em;margin-bottom:10px">— Europejska · 0–36 —</div>
+  <div style="display:flex;justify-content:center;margin-bottom:8px">
+    <canvas id="rouletteCanvas" width="240" height="240" style="border-radius:50%;box-shadow:0 0 24px rgba(224,48,48,.25)"></canvas>
+  </div>
+  <div id="rl-status" style="text-align:center;font-size:.7rem;font-weight:700;color:#c9a84c;min-height:20px;margin-bottom:10px">Postaw zakłady i naciśnij SPIN</div>
+  <!-- Outside bets -->
+  <div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px;margin-bottom:8px">
+    <div style="font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.35);margin-bottom:6px;text-align:center">Zakłady zewnętrzne</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:4px">
+      <button class="rl-ob" id="rlb-red" onclick="rlToggle('red')">🔴 Czerwone<br><small>×2</small></button>
+      <button class="rl-ob" id="rlb-black" onclick="rlToggle('black')">⚫ Czarne<br><small>×2</small></button>
+      <button class="rl-ob" id="rlb-zero" onclick="rlToggle('zero')">🟢 Zero<br><small>×36</small></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:4px">
+      <button class="rl-ob" id="rlb-even" onclick="rlToggle('even')">Parzyste<br><small>×2</small></button>
+      <button class="rl-ob" id="rlb-odd" onclick="rlToggle('odd')">Nieparzyste<br><small>×2</small></button>
+      <button class="rl-ob" id="rlb-low" onclick="rlToggle('low')">1–18<br><small>×2</small></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:4px">
+      <button class="rl-ob" id="rlb-high" onclick="rlToggle('high')">19–36<br><small>×2</small></button>
+      <button class="rl-ob" id="rlb-d1" onclick="rlToggle('d1')">1–12<br><small>×3</small></button>
+      <button class="rl-ob" id="rlb-d2" onclick="rlToggle('d2')">13–24<br><small>×3</small></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+      <button class="rl-ob" id="rlb-d3" onclick="rlToggle('d3')">25–36<br><small>×3</small></button>
+      <button class="rl-ob" id="rlb-c1" onclick="rlToggle('c1')">Kol. 1<br><small>×3</small></button>
+      <button class="rl-ob" id="rlb-c2" onclick="rlToggle('c2')">Kol. 2<br><small>×3</small></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr;gap:4px;margin-top:4px">
+      <button class="rl-ob" id="rlb-c3" onclick="rlToggle('c3')">Kolumna 3 ×3</button>
+    </div>
+  </div>
+  <!-- Number grid -->
+  <div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px;margin-bottom:8px">
+    <div style="font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.35);margin-bottom:6px;text-align:center">Bezpośredni zakład na numer ×36</div>
+    <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:2px" id="rl-num-grid"></div>
+  </div>
+  <!-- Stake -->
+  <div style="background:rgba(0,0,0,.28);border:1px solid rgba(201,168,76,.1);border-radius:8px;padding:8px;margin-bottom:8px">
+    <div style="font-size:.42rem;color:rgba(201,168,76,.4);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px">Stawka na zaznaczenie:</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px">
+      <button class="slot-bet-btn active" onclick="rlSetStake(10,this)">$10</button>
+      <button class="slot-bet-btn" onclick="rlSetStake(25,this)">$25</button>
+      <button class="slot-bet-btn" onclick="rlSetStake(50,this)">$50</button>
+      <button class="slot-bet-btn" onclick="rlSetStake(100,this)">$100</button>
+    </div>
+    <div style="display:flex;gap:5px">
+      <input type="number" id="rl-custom" class="plinko-custom-input" placeholder="Własna kwota..." min="1" oninput="rlCustom(this)">
+      <button class="plinko-allin-btn" onclick="rlAllIn()">ALL IN 🔥</button>
+    </div>
+    <div id="rl-bets-summary" style="margin-top:6px;font-size:.5rem;color:rgba(201,168,76,.55);min-height:14px"></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <button class="btn-clear" onclick="rlClear()">Wyczyść</button>
+    <button class="btn-start" id="rl-spin-btn" onclick="rlSpin()">🎡 SPIN!</button>
+  </div>
+  <div style="font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.28);text-align:center;margin-bottom:4px">Ostatnie wyniki</div>
+  <div id="rl-hist" style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none"></div>
+</div>
+</div>
+
+<!-- ═══════ MINES SCREEN ═══════ -->
+<div class="screen" id="screen-mines">
+<div style="padding:14px">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.15em;color:#f97316;text-align:center;margin-bottom:2px;text-shadow:0 0 20px rgba(249,115,22,.4)">💣 MINY</div>
+  <div style="font-size:.44rem;color:rgba(249,115,22,.4);text-align:center;letter-spacing:.3em;margin-bottom:10px">— Pole minowe 9×9 —</div>
+  <div id="mn-status" style="text-align:center;font-size:.7rem;font-weight:700;color:#c9a84c;min-height:20px;margin-bottom:8px">Wybierz mnożnik i zacznij grę</div>
+  <!-- Setup panel -->
+  <div id="mn-setup" style="background:rgba(0,0,0,.3);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:10px;margin-bottom:8px">
+    <div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(249,115,22,.5);margin-bottom:8px;text-align:center">Docelowy mnożnik = liczba min:</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px" id="mn-mult-grid"></div>
+    <div style="font-size:.42rem;color:rgba(201,168,76,.4);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px">Zakład:</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px">
+      <button class="slot-bet-btn active" onclick="mnSetBet(10,this)">$10</button>
+      <button class="slot-bet-btn" onclick="mnSetBet(25,this)">$25</button>
+      <button class="slot-bet-btn" onclick="mnSetBet(50,this)">$50</button>
+      <button class="slot-bet-btn" onclick="mnSetBet(100,this)">$100</button>
+    </div>
+    <div style="display:flex;gap:5px;margin-bottom:8px">
+      <input type="number" id="mn-custom" class="plinko-custom-input" placeholder="Własna kwota..." min="1" oninput="mnCustomBet(this)">
+      <button class="plinko-allin-btn" onclick="mnAllIn()">ALL IN 🔥</button>
+    </div>
+    <button class="btn-start" style="width:100%" onclick="mnStart()">💣 ROZPOCZNIJ GRĘ</button>
+  </div>
+  <!-- Board panel -->
+  <div id="mn-board-wrap" style="display:none">
+    <div style="background:rgba(0,0,0,.28);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:8px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:.55rem;margin-bottom:6px">
+        <span style="color:rgba(255,255,255,.4)">Zakład: <b id="mn-bet-disp" style="color:var(--gold2)">$0</b></span>
+        <span style="color:rgba(255,255,255,.4)">Mnożnik: <b id="mn-mult-disp" style="color:#27c76f">1.00×</b></span>
+        <span style="color:rgba(255,255,255,.4)">Miny: <b id="mn-bombs-disp" style="color:#e03030">0</b></span>
+      </div>
+      <div id="mn-grid" style="display:grid;grid-template-columns:repeat(9,1fr);gap:3px"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="btn-clear" onclick="mnReset()">🔄 Nowa gra</button>
+      <button class="btn-start" id="mn-stop-btn" onclick="mnStop()" disabled style="flex:2;background:linear-gradient(180deg,#27c76f,#1a7a3c);box-shadow:0 4px 14px rgba(39,199,111,.3)">💰 WYPŁAĆ ($<span id="mn-payout-disp">0</span>)</button>
+    </div>
+    <div id="mn-result" style="text-align:center;font-size:.7rem;font-weight:700;min-height:18px"></div>
+  </div>
+  <div style="font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.28);text-align:center;margin-bottom:4px;margin-top:8px">Ostatnie wyniki</div>
+  <div id="mn-hist" style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none"></div>
+</div>
 </div>
 
 </div><!-- /main-app -->
@@ -1024,8 +1155,10 @@ function loginEnter(username,savedState){
   currentUser=username;
   document.getElementById('login-screen').style.display='none';
   document.getElementById('main-app').style.display='flex';
-  // Set avatar
-  const name=username||'Gość';
+  // Show/hide admin nav
+  const isAdmin = username === 'admin';
+  document.getElementById('nav-admin').style.display = isAdmin ? '' : 'none';
+  if(isAdmin) adminRender();
   document.getElementById('user-name').textContent=name;
   document.getElementById('user-avatar').textContent=name[0].toUpperCase();
   // Load per-user save if available
@@ -1046,8 +1179,12 @@ function loginEnter(username,savedState){
   }
   updateGlobal();bjSyncStakes();
   document.getElementById('bj-pause-btn').disabled=true;
-  bjSetStatus('Ustaw zakłady i naciśnij START','idle');
-  renderPokerPaytable(null);
+  document.getElementById('bj-start-btn').textContent='▶ ROZDAJ KARTY';
+  document.getElementById('bj-start-btn').disabled=false;
+  document.getElementById('bj-clear-btn').disabled=true;
+  document.querySelectorAll('#screen-bj .market-btn').forEach(e=>e.setAttribute('disabled',''));
+  document.querySelectorAll('#screen-bj .chip').forEach(e=>e.setAttribute('disabled',''));
+  bjSetStatus('Naciśnij ROZDAJ KARTY — zakłady po rozdaniu','idle');
   plinkoRenderBuckets();
   setTimeout(()=>{
     const canvas=document.getElementById('plinkoCanvas');
@@ -1094,7 +1231,9 @@ const GS = {
     slots:  { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 },
     crash:  { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 },
     poker:  { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 },
-    plinko: { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 }
+    plinko: { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 },
+    roulette:{ rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 },
+    mines:   { rounds:0, won:0, profit:0, totalBet:0, totalPayout:0 }
   },
   streaks: { cur:0, best:0, worstLose:0, curLose:0, biggestWin:0, biggestLoss:0 },
   bjDetail: { bjPlayer:0, bjDealer:0, bjAny:0, bustPlayer:0, bustDealer:0, playerWins:0, dealerWins:0, pushes:0,
@@ -1205,7 +1344,7 @@ const BJ_MKTS={
 };
 const BJ={
   deck:[],pHand:[],dHand:[],bets:{},selMkt:null,
-  speed:900,paused:false,roundActive:false,history:[]
+  speed:900,paused:false,roundActive:false,bettingPhase:false,history:[]
 };
 
 function bjBuild(){const d=[];SUITS.forEach(s=>RANKS.forEach(r=>d.push({r,s})));return d;}
@@ -1243,20 +1382,20 @@ function bjRender(dealerHidden){
 }
 
 function bjSelectMkt(id,el){
-  if(BJ.roundActive)return;
+  if(BJ.roundActive&&!BJ.bettingPhase)return;
   BJ.selMkt=id;
   document.querySelectorAll('#screen-bj .market-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
 
 function bjAddChip(v){
-  if(!BJ.selMkt||BJ.roundActive)return;
+  if(!BJ.selMkt||(BJ.roundActive&&!BJ.bettingPhase))return;
   if(v>GS.balance)return;
   BJ.bets[BJ.selMkt]=(BJ.bets[BJ.selMkt]||0)+v;
   bjSyncStakes();
 }
 function bjAddCustom(){
-  if(!BJ.selMkt||BJ.roundActive)return;
+  if(!BJ.selMkt||(BJ.roundActive&&!BJ.bettingPhase))return;
   const v=parseInt(document.getElementById('bj-custom-input').value)||0;
   if(v<=0||v>GS.balance)return;
   BJ.bets[BJ.selMkt]=(BJ.bets[BJ.selMkt]||0)+v;
@@ -1264,7 +1403,7 @@ function bjAddCustom(){
   bjSyncStakes();
 }
 function bjAllIn(){
-  if(!BJ.selMkt||BJ.roundActive||GS.balance<=0)return;
+  if(!BJ.selMkt||(BJ.roundActive&&!BJ.bettingPhase)||GS.balance<=0)return;
   BJ.bets[BJ.selMkt]=(BJ.bets[BJ.selMkt]||0)+GS.balance;
   document.getElementById('bj-custom-input').value='';
   bjSyncStakes();
@@ -1274,16 +1413,15 @@ function bjSyncStakes(){
   const rows=document.getElementById('bj-stake-rows'),empty=document.getElementById('bj-stake-empty');
   rows.innerHTML='';
   const entries=Object.entries(BJ.bets).filter(([,v])=>v>0);
-  if(entries.length===0){rows.appendChild(empty);document.getElementById('bj-start-btn').disabled=true;return;}
+  if(entries.length===0){rows.appendChild(empty);return;}
   entries.forEach(([id,amt])=>{
     const row=document.createElement('div');row.className='stake-row';
     row.innerHTML=`<span class="stake-mkt">${BJ_MKTS[id].label}</span><span class="stake-amt">$${amt}</span>`;
     rows.appendChild(row);
   });
-  document.getElementById('bj-start-btn').disabled=false;
 }
 
-function bjClearBets(){if(BJ.roundActive)return;BJ.bets={};BJ.selMkt=null;document.querySelectorAll('#screen-bj .market-btn').forEach(b=>b.classList.remove('active'));bjSyncStakes();}
+function bjClearBets(){if(BJ.roundActive&&!BJ.bettingPhase)return;BJ.bets={};BJ.selMkt=null;document.querySelectorAll('#screen-bj .market-btn').forEach(b=>b.classList.remove('active'));bjSyncStakes();}
 
 function bjTogglePause(){
   if(!BJ.roundActive)return;
@@ -1301,13 +1439,12 @@ async function bjSmartSleep(ms){
 }
 
 async function bjStartRound(){
-  const totalStaked=Object.values(BJ.bets).reduce((a,b)=>a+b,0);
-  if(totalStaked>GS.balance){bjSetStatus('Niewystarczające saldo!','lose');return;}
-  GS.balance-=totalStaked;updateGlobal();
+  // Phase 1: Deal initial 4 cards, THEN allow betting
   BJ.roundActive=true;
   document.getElementById('bj-clear-btn').disabled=true;
   document.getElementById('bj-start-btn').disabled=true;
-  document.getElementById('bj-pause-btn').disabled=false;
+  document.getElementById('bj-start-btn').textContent='⏳ Czekaj...';
+  document.getElementById('bj-pause-btn').disabled=true;
   document.querySelectorAll('#screen-bj .market-btn, #screen-bj .chip').forEach(e=>e.setAttribute('disabled',''));
   BJ.pHand=[];BJ.dHand=[];bjRender(true);
   bjSetStatus('Rozdawanie kart...','playing');bjSetBotMsg('');
@@ -1316,6 +1453,32 @@ async function bjStartRound(){
   BJ.pHand.push(bjDraw());bjRender(true);await bjSmartSleep(BJ.speed*0.3);
   BJ.dHand.push(bjDraw());bjRender(true);await bjSmartSleep(BJ.speed*0.3);
   BJ.pHand.push(bjDraw());bjRender(true);await bjSmartSleep(BJ.speed*0.3);
+
+  // Phase 2: Open betting — unlock markets & chips
+  BJ.bettingPhase=true;
+  bjSetStatus('📋 Ustaw zakłady na podstawie kart!','idle');
+  bjSetBotMsg(`🤖 AI: ${bjScore(BJ.pHand)} vs Krupier: ?`);
+  document.querySelectorAll('#screen-bj .market-btn, #screen-bj .chip').forEach(e=>e.removeAttribute('disabled'));
+  document.getElementById('bj-clear-btn').disabled=false;
+  document.getElementById('bj-start-btn').textContent='✅ POTWIERDŹ ZAKŁADY';
+  document.getElementById('bj-start-btn').disabled=false;
+  document.getElementById('bj-start-btn').onclick=bjConfirmBets;
+  bjSyncStakes();
+}
+
+async function bjConfirmBets(){
+  const totalStaked=Object.values(BJ.bets).reduce((a,b)=>a+b,0);
+  if(totalStaked<=0){bjSetStatus('Postaw co najmniej jeden zakład!','lose');return;}
+  if(totalStaked>GS.balance){bjSetStatus('Niewystarczające saldo!','lose');return;}
+  GS.balance-=totalStaked;updateGlobal();
+  BJ.bettingPhase=false;
+  document.getElementById('bj-start-btn').onclick=bjStartRound;
+  document.getElementById('bj-start-btn').textContent='▶ START';
+  document.getElementById('bj-clear-btn').disabled=true;
+  document.getElementById('bj-start-btn').disabled=true;
+  document.getElementById('bj-pause-btn').disabled=false;
+  document.querySelectorAll('#screen-bj .market-btn, #screen-bj .chip').forEach(e=>e.setAttribute('disabled',''));
+
   const dBJ=bjIsBJ(BJ.dHand),pBJ=bjIsBJ(BJ.pHand);
   if(pBJ){bjSetBotMsg('🎉 AI Gracz ma BLACKJACK!');bjSetStatus('BLACKJACK! AI gracz ma 21!','win');await bjSmartSleep(BJ.speed*0.7);}
   else await bjPlayerTurn();
@@ -1388,12 +1551,13 @@ function bjFinalizeRound(){
       case'cards_5':hit=total===5;break;
       case'cards_6plus':hit=total>=6;break;
     }
-    const payout=hit?Math.floor(stake*BJ_MKTS[id].odds)+stake:0;
+    const payout=hit?Math.floor(stake*BJ_MKTS[id].odds):0;
     results[id]={stake,hit,payout,label:BJ_MKTS[id].label};
   }
   let totalReturn=Object.values(results).reduce((a,r)=>a+r.payout,0);
   const totalStaked=Object.values(BJ.bets).reduce((a,b)=>a+b,0);
   const net=totalReturn-totalStaked;
+  GS.balance+=totalStaked; // restore pre-deducted stake before recordResult
   recordResult('bj', net, net>=0);
   // Track detailed BJ stats
   if(pBJ) GS.bjDetail.bjPlayer++;
@@ -1434,17 +1598,20 @@ function bjFinalizeRound(){
 
 function bjContinue(){
   document.getElementById('bj-modal').classList.remove('show');
-  BJ.roundActive=false;BJ.paused=false;
+  BJ.roundActive=false;BJ.bettingPhase=false;BJ.paused=false;
   document.getElementById('bj-pause-btn').textContent='⏸ Pauza';
   document.getElementById('bj-pause-btn').classList.remove('paused');
   document.getElementById('bj-pause-btn').disabled=true;
   document.getElementById('bj-pause-overlay').classList.remove('show');
-  document.getElementById('bj-clear-btn').disabled=false;
+  document.getElementById('bj-start-btn').textContent='▶ ROZDAJ KARTY';
+  document.getElementById('bj-start-btn').onclick=bjStartRound;
+  document.getElementById('bj-start-btn').disabled=false;
   BJ.bets={};BJ.selMkt=null;
-  document.querySelectorAll('#screen-bj .market-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#screen-bj .market-btn').forEach(e=>e.removeAttribute('disabled'));
+  document.querySelectorAll('#screen-bj .market-btn').forEach(b=>{b.classList.remove('active');b.removeAttribute('disabled');});
+  document.querySelectorAll('#screen-bj .chip').forEach(e=>e.removeAttribute('disabled'));
+  document.getElementById('bj-clear-btn').disabled=false;
   bjSyncStakes();bjSetBotMsg('');
-  bjSetStatus('Ustaw zakłady i naciśnij START','idle');
+  bjSetStatus('Obstaw zakłady i naciśnij ROZDAJ KARTY','idle');
 }
 
 function bjRenderHistory(){
@@ -1462,8 +1629,9 @@ function bjRenderHistory(){
 // ═══════════════════════════════════════
 const SLOT_SYMS=['🍒','🍋','🍊','🔔','⭐','💎','7️⃣','🍇'];
 const SLOT_WEIGHTS=[25,20,15,12,10,6,4,8]; // weights (total=100)
-let slotBet=10,slotSpinning=false;
+let slotBet=10,slotSpinning=false,slotSpeed=300;
 
+function slotSetSpeed(ms,el){slotSpeed=ms;document.querySelectorAll('#screen-slots .speed-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
 function slotSetBet(v,el){slotBet=v;document.querySelectorAll('.slot-bet-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('slot-custom-input').value='';}
 function slotSetCustom(input){const v=parseInt(input.value);if(v>0){slotBet=v;document.querySelectorAll('.slot-bet-btn').forEach(b=>b.classList.remove('active'));}}
 function slotAllIn(){if(GS.balance<=0)return;slotBet=GS.balance;document.querySelectorAll('.slot-bet-btn').forEach(b=>b.classList.remove('active'));document.getElementById('slot-custom-input').value=GS.balance;}
@@ -1490,18 +1658,18 @@ async function slotSpin(){
   for(let i=0;i<5;i++)results.push(slotPickSym());
   // stagger stop
   for(let i=0;i<5;i++){
-    await new Promise(r=>setTimeout(r,300+i*200));
+    await new Promise(r=>setTimeout(r, slotSpeed===10 ? 0 : Math.max(20, slotSpeed/5 + i*(slotSpeed/4))));
     reels[i].classList.remove('spinning');
     reels[i].textContent=results[i];
   }
-  await new Promise(r=>setTimeout(r,200));
+  await new Promise(r=>setTimeout(r, slotSpeed===10 ? 0 : 100));
   // evaluate
   const {mult,label}=slotEval(results);
   let payout=mult>0?Math.floor(slotBet*mult):0;
   let net=payout-slotBet;
   let won=mult>0;
-  if(won){document.getElementById('slot-win-line').classList.add('active');}
-  // Balance was already deducted before spin; now add payout if any
+  document.getElementById('slot-win-line').classList.toggle('active',won);
+  // balance already deducted at spin; add back payout (0 on loss = correct deduction)
   GS.balance+=payout;
   GS.profit+=net;
   GS.games.slots.rounds++;
@@ -1679,6 +1847,7 @@ function crashCashout(){
   crashState.cashedOut=true;crashState.running=false;
   const payout=Math.floor(crashState.betAmt*crashState.mult);
   const net=payout-crashState.betAmt;
+  GS.balance+=crashState.betAmt; // restore pre-deducted bet
   recordResult('crash',net,true);
   document.getElementById('crash-mult').className='crash-multiplier safe';
   document.getElementById('crash-status').textContent=`💰 Wypłacono przy ${crashState.mult.toFixed(2)}× — +$${net}`;
@@ -1710,6 +1879,7 @@ function crashDoCrash(mult){
   document.getElementById('crash-start-btn').disabled=false;
   document.getElementById('crash-cashout-btn').disabled=true;
   if(crashState.betPlaced&&!crashState.cashedOut){
+    GS.balance+=crashState.betAmt; // restore pre-deducted bet
     recordResult('crash',-crashState.betAmt,false);
     document.getElementById('crash-status').textContent=`💥 CRASH przy ${mult.toFixed(2)}× — Przegrana $${crashState.betAmt}`;
     crashAddHist(mult,-crashState.betAmt);
@@ -1724,129 +1894,14 @@ function crashAddHist(mult,net){
   hist.prepend(pill);if(hist.children.length>15)hist.lastChild.remove();
 }
 
-// ═══════════════════════════════════════
-//  VIDEO POKER
-// ═══════════════════════════════════════
-const POKER_HANDS=[
-  {name:'Royal Flush',mult:800,check:(c)=>pokerIsRoyalFlush(c)},
-  {name:'Straight Flush',mult:50,check:(c)=>pokerIsStraightFlush(c)},
-  {name:'Four of a Kind',mult:25,check:(c)=>pokerHasN(c,4)},
-  {name:'Full House',mult:9,check:(c)=>pokerIsFullHouse(c)},
-  {name:'Flush',mult:6,check:(c)=>pokerIsFlush(c)},
-  {name:'Straight',mult:4,check:(c)=>pokerIsStraight(c)},
-  {name:'Three of a Kind',mult:3,check:(c)=>pokerHasN(c,3)},
-  {name:'Two Pair',mult:2,check:(c)=>pokerIsTwoPair(c)},
-  {name:'Jacks or Better',mult:1,check:(c)=>pokerIsJacksOrBetter(c)},
-];
-let pokerState={phase:'idle',hand:[],held:[],bet:10,deck:[]};
-
 function crashAllIn(){document.getElementById('crash-bet-input').value=GS.balance;}
-function pokerSetBet(v,el){pokerState.bet=v;document.querySelectorAll('.poker-bet-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('poker-custom-input').value='';}
-function pokerSetCustom(input){const v=parseInt(input.value);if(v>0){pokerState.bet=v;document.querySelectorAll('.poker-bet-btn').forEach(b=>b.classList.remove('active'));}}
-function pokerAllIn(){if(GS.balance<=0)return;pokerState.bet=GS.balance;document.querySelectorAll('.poker-bet-btn').forEach(b=>b.classList.remove('active'));document.getElementById('poker-custom-input').value=GS.balance;}
-
-function pokerBuildDeck(){const d=[];SUITS.forEach(s=>RANKS.forEach(r=>d.push({r,s})));for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}return d;}
-
-function pokerRankVal(r){const m={'A':14,'K':13,'Q':12,'J':11,'10':10,'9':9,'8':8,'7':7,'6':6,'5':5,'4':4,'3':3,'2':2};return m[r]||0;}
-function pokerIsFlush(h){return h.every(c=>c.s===h[0].s);}
-function pokerIsStraight(h){const vals=h.map(c=>pokerRankVal(c.r)).sort((a,b)=>a-b);if(vals[4]-vals[0]===4&&new Set(vals).size===5)return true;// A-2-3-4-5 (wheel)
-  if(vals.join(',')===`2,3,4,5,14`)return true;return false;}
-function pokerIsStraightFlush(h){return pokerIsFlush(h)&&pokerIsStraight(h);}
-function pokerIsRoyalFlush(h){return pokerIsStraightFlush(h)&&h.some(c=>c.r==='A')&&h.some(c=>c.r==='K');}
-function pokerHasN(h,n){const counts={};h.forEach(c=>{counts[c.r]=(counts[c.r]||0)+1;});return Object.values(counts).includes(n);}
-function pokerIsFullHouse(h){const counts={};h.forEach(c=>{counts[c.r]=(counts[c.r]||0)+1;});const vals=Object.values(counts).sort((a,b)=>a-b);return vals.length===2&&vals[0]===2&&vals[1]===3;}
-function pokerIsTwoPair(h){const counts={};h.forEach(c=>{counts[c.r]=(counts[c.r]||0)+1;});return Object.values(counts).filter(v=>v===2).length===2;}
-function pokerIsJacksOrBetter(h){const counts={};h.forEach(c=>{counts[c.r]=(counts[c.r]||0)+1;});return Object.entries(counts).some(([r,v])=>v===2&&['J','Q','K','A'].includes(r));}
-
-function pokerEval(h){for(const ph of POKER_HANDS)if(ph.check(h))return ph;return null;}
-
-function pokerRenderCards(){
-  const area=document.getElementById('poker-cards');area.innerHTML='';
-  pokerState.hand.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='poker-card '+(bjRed(c)?'rc':'bc')+(pokerState.held[i]?' held':'');
-    d.innerHTML=`<div class="corn"><span class="r">${c.r}</span><span class="s">${c.s}</span></div>
-    <div class="cs">${c.s}</div>
-    <div class="corn bot"><span class="r">${c.r}</span><span class="s">${c.s}</span></div>
-    <span class="hold-label">TRZYMAJ</span>`;
-    d.onclick=()=>pokerToggleHold(i);
-    area.appendChild(d);
-  });
-}
-
-function pokerToggleHold(i){
-  if(pokerState.phase!=='hold')return;
-  pokerState.held[i]=!pokerState.held[i];
-  pokerRenderCards();
-}
-
-function pokerDeal(){
-  if(pokerState.bet>GS.balance){document.getElementById('poker-hand-name').textContent='Niewystarczające saldo!';return;}
-  GS.balance-=pokerState.bet;updateGlobal();
-  pokerState.deck=pokerBuildDeck();
-  pokerState.hand=[];pokerState.held=[false,false,false,false,false];
-  for(let i=0;i<5;i++)pokerState.hand.push(pokerState.deck.pop());
-  pokerState.phase='hold';
-  pokerRenderCards();
-  const result=pokerEval(pokerState.hand);
-  document.getElementById('poker-hand-name').textContent=result?result.name:'Nie ma pary — wybierz karty do trzymania';
-  document.getElementById('poker-result').textContent='Kliknij karty aby zatrzymać, potem DOBIERZ';
-  document.getElementById('poker-deal-btn').disabled=true;
-  document.getElementById('poker-draw-btn').disabled=false;
-  // Highlight matching hand in paytable
-  renderPokerPaytable(result?result.name:null);
-}
-
-function pokerDraw(){
-  for(let i=0;i<5;i++)if(!pokerState.held[i])pokerState.hand[i]=pokerState.deck.pop();
-  pokerState.phase='done';
-  pokerRenderCards();
-  const result=pokerEval(pokerState.hand);
-  document.getElementById('poker-hand-name').textContent=result?result.name:'Brak wygranej kombinacji';
-  let net=-pokerState.bet,won=false;
-  if(result){
-    const payout=Math.floor(pokerState.bet*result.mult);
-    net=payout-pokerState.bet;won=true;
-    document.getElementById('poker-result').textContent=`Wygrana! +$${net} (${result.mult}×)`;
-    document.getElementById('poker-result').style.color='var(--win)';
-  } else {
-    document.getElementById('poker-result').textContent=`Brak wygranej. Strata $${pokerState.bet}`;
-    document.getElementById('poker-result').style.color='rgba(224,48,48,.65)';
-  }
-  recordResult('poker',net,won);
-  if(result){GS.pokerDetail.hands[result.name]=(GS.pokerDetail.hands[result.name]||0)+1;}
-  else{GS.pokerDetail.hands['Brak']=(GS.pokerDetail.hands['Brak']||0)+1;}
-  pokerAddHist(result,net);
-  document.getElementById('poker-deal-btn').disabled=false;
-  document.getElementById('poker-draw-btn').disabled=true;
-  renderPokerPaytable(result?result.name:null);
-}
-
-function renderPokerPaytable(highlightName){
-  const grid=document.getElementById('poker-pt-grid');grid.innerHTML='';
-  POKER_HANDS.forEach(h=>{
-    const row=document.createElement('div');
-    row.className='poker-pt-row'+(h.name===highlightName?' highlight':'');
-    row.innerHTML=`<span class="poker-pt-hand">${h.name}</span><span class="poker-pt-pay">${h.mult}×</span>`;
-    grid.appendChild(row);
-  });
-}
-
-function pokerAddHist(result,net){
-  const hist=document.getElementById('poker-hist');
-  const item=document.createElement('div');
-  item.className='poker-hist-item '+(net>0?'w':'l');
-  item.textContent=result?result.name.split(' ').map(w=>w[0]).join(''):'L';
-  item.title=result?`${result.name} +$${net}`:`-$${pokerState.bet}`;
-  hist.prepend(item);if(hist.children.length>15)hist.lastChild.remove();
-}
 
 // ═══════════════════════════════════════
 //  PLINKO  —  multi-ball physics engine
 // ═══════════════════════════════════════
-const PLINKO_ROWS = 10;
+const PLINKO_ROWS = 8;
 const PLINKO_COLS = 11; // pins per row (staggered grid)
-const PLINKO_MULTS = [4, 2, 1.5, 0.5, 0.3, 0.2, 0.3, 0.5, 1.5, 2, 4];
+const PLINKO_MULTS = [3.5, 1.5, 0.7, 0.3, 0.15, 0.1, 0.15, 0.3, 0.7, 1.5, 3.5];
 let plinkoBet = 10;
 let plinkoAnimId = null;
 let plinkoBalls = [];
@@ -1928,7 +1983,7 @@ function plinkoDrop(){
     y: geo.yPad - 14,
     vx: (Math.random() - 0.5) * 0.4,
     vy: 0.5,
-    radius: 6,
+    radius: 4,
     bet: plinkoBet,
     done: false,
     trail: [],
@@ -1960,7 +2015,7 @@ function plinkoLoop(){
     const {W, H, xPad, yPad, dx, dy} = geo;
     const g = 0.22;
     const pinR = 4;
-    const ballR = 6;
+    const ballR = 4;
     const bucketW = W / PLINKO_MULTS.length;
     const bucketY = yPad + (PLINKO_ROWS - 1) * dy + dy * 0.75;
 
@@ -2196,21 +2251,6 @@ function renderStats(){
     </div>`;
   }).join('');
 
-  // Poker hand stats
-  const pokerSect = document.getElementById('poker-detail-stats');
-  if(pokerSect){
-    const ph = GS.pokerDetail.hands;
-    const phTotal = Object.values(ph).reduce((a,v)=>a+v,0)||1;
-    const sorted = Object.entries(ph).sort((a,b)=>b[1]-a[1]);
-    pokerSect.innerHTML = sorted.map(([name,cnt])=>{
-      const pct=Math.round(cnt/phTotal*100);
-      return `<div class="crash-hist-row">
-        <div class="crash-hist-label2" style="width:90px;text-align:left;font-size:.42rem">${name}</div>
-        <div class="crash-hist-bar-wrap"><div class="crash-hist-bar" style="width:${pct}%;background:var(--win)"></div></div>
-        <div class="crash-hist-count" style="color:var(--gold2)">${cnt} <span style="color:rgba(255,255,255,.3);font-size:.45rem">(${pct}%)</span></div>
-      </div>`;
-    }).join('') || '<div style="text-align:center;color:rgba(255,255,255,.3);font-size:.5rem;padding:8px">Brak danych</div>';
-  }
 
   // Plinko bucket hits
   const plinkoSect = document.getElementById('plinko-detail-stats');
@@ -2281,31 +2321,371 @@ function resetBalance(){
 }
 
 // ═══════════════════════════════════════
+//  ADMIN PANEL
+// ═══════════════════════════════════════
+function adminRender(){
+  const wrap=document.getElementById('admin-user-list');
+  wrap.innerHTML='';
+  const users=loginGetUsers();
+  const entries=Object.entries(users).filter(([u])=>u!=='admin');
+  if(!entries.length){
+    wrap.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:.58rem;padding:20px">Brak zarejestrowanych graczy</div>';
+    return;
+  }
+  entries.forEach(([username,data])=>{
+    const bal=data.save?data.save.balance:1000;
+    const rounds=data.save?data.save.totalRoundsPlayed||0:0;
+    const profit=data.save?data.save.profit||0:0;
+    const card=document.createElement('div');
+    card.className='admin-card';
+    card.innerHTML=`
+      <div class="admin-card-header">
+        <div class="admin-username">👤 ${username}</div>
+        <div class="admin-balance">$${bal}</div>
+      </div>
+      <div class="admin-stat">Rundy: ${rounds} &nbsp;|&nbsp; Zysk: ${profit>=0?'+':''}$${profit}</div>
+      <div class="admin-actions" style="margin-top:10px">
+        <input class="admin-input" type="number" id="adm-inp-${username}" placeholder="Kwota" min="1">
+        <button class="admin-btn give" onclick="adminGive('${username}')">+ Daj $</button>
+        <button class="admin-btn take" onclick="adminTake('${username}')">- Zabierz $</button>
+        <button class="admin-btn reset" onclick="adminResetBalance('${username}')">↺ Reset</button>
+        <button class="admin-btn del" onclick="adminDelete('${username}')">🗑 Usuń</button>
+      </div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function adminGetAmt(username){
+  const v=parseInt(document.getElementById(`adm-inp-${username}`).value)||0;
+  if(v<=0){alert('Wpisz kwotę!');return 0;}
+  return v;
+}
+
+function adminGive(username){
+  const amt=adminGetAmt(username);if(!amt)return;
+  const users=loginGetUsers();
+  if(!users[username])return;
+  if(!users[username].save)users[username].save={balance:1000,startBalance:1000,profit:0,balanceHistory:[1000],games:{bj:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},slots:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},crash:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},plinko:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0}},streaks:{cur:0,best:0,worstLose:0,curLose:0,biggestWin:0,biggestLoss:0},bjDetail:{bjPlayer:0,bjDealer:0,bjAny:0,bustPlayer:0,bustDealer:0,playerWins:0,dealerWins:0,pushes:0,handValues:{},dealerUpCards:{},winningCards:{}},crashHist:{u15:0,u2:0,u3:0,u5:0,u10:0,u10p:0,totalCashout:0,cashoutCount:0,biggestMult:0},slotDetail:{bySymbol:{}},pokerDetail:{hands:{}},plinkoDetail:{bucketHits:new Array(11).fill(0)},totalRoundsPlayed:0,sessionStart:Date.now()};
+  users[username].save.balance+=amt;
+  loginSaveUsers(users);
+  adminRender();
+}
+
+function adminTake(username){
+  const amt=adminGetAmt(username);if(!amt)return;
+  const users=loginGetUsers();
+  if(!users[username]||!users[username].save)return;
+  users[username].save.balance=Math.max(0,users[username].save.balance-amt);
+  loginSaveUsers(users);
+  adminRender();
+}
+
+function adminResetBalance(username){
+  if(!confirm(`Zresetować saldo ${username} do $1000?`))return;
+  const users=loginGetUsers();
+  if(!users[username])return;
+  if(!users[username].save)users[username].save={};
+  users[username].save.balance=1000;
+  users[username].save.startBalance=1000;
+  users[username].save.profit=0;
+  users[username].save.balanceHistory=[1000];
+  loginSaveUsers(users);
+  adminRender();
+}
+
+function adminDelete(username){
+  if(!confirm(`Usunąć konto ${username}? Tej operacji nie można cofnąć!`))return;
+  const users=loginGetUsers();
+  delete users[username];
+  loginSaveUsers(users);
+  adminRender();
+}
+
+// Admin re-render now handled in the combined switchScreen override below
+
+// ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
-loadState();
-BJ.deck=bjBuildDecks(6);
-updateGlobal();bjSyncStakes();
-document.getElementById('bj-pause-btn').disabled=true;
-bjSetStatus('Ustaw zakłady i naciśnij START','idle');
-renderPokerPaytable(null);
-plinkoRenderBuckets();
-
-// Draw empty plinko board after fonts/layout settle
-setTimeout(()=>{
-  const canvas=document.getElementById('plinkoCanvas');
-  const geo=plinkoGeo();
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,geo.W,geo.H);
-  for(let r=0;r<PLINKO_ROWS;r++){
-    const cnt=plinkoPinCount(r);
-    for(let c=0;c<cnt;c++){
-      const p=plinkoPinPos(r,c,geo);
-      ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,255,255,.18)';ctx.fill();
-    }
+// Seed admin account if not exists
+(function seedAdmin(){
+  const users=loginGetUsers();
+  if(!users['admin']){
+    users['admin']={pw:loginHash('passw0rd'),save:null,isAdmin:true};
+    loginSaveUsers(users);
   }
-},100);
+})();
+
+BJ.deck=bjBuildDecks(6);
+plinkoRenderBuckets();
+// INIT deferred to loginEnter — no auto-start
+
+// Draw empty plinko board is handled inside loginEnter after layout settles
+
+
+// ═══════════════════════════════════════
+//  ROULETTE
+// ═══════════════════════════════════════
+const RL_RED=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+const RL_WHEEL=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+let RL={stake:10,bets:{},spinning:false,hist:[]};
+
+function rlColor(n){return n===0?'g':RL_RED.includes(n)?'r':'b';}
+function rlInitGrid(){
+  const g=document.getElementById('rl-num-grid');
+  if(!g||g.children.length)return;
+  // 0 spanning top
+  const z=document.createElement('button');
+  z.className='rl-nb g';z.id='rln-0';z.textContent='0';
+  z.style.gridColumn='1/10';z.style.height='22px';z.style.aspectRatio='unset';
+  z.onclick=()=>rlToggleNum(0);g.appendChild(z);
+  for(let n=1;n<=36;n++){
+    const c=rlColor(n);
+    const b=document.createElement('button');
+    b.className=`rl-nb ${c}`;b.id='rln-'+n;b.textContent=n;
+    b.onclick=()=>rlToggleNum(n);g.appendChild(b);
+  }
+}
+function rlToggleNum(n){
+  const k='n'+n;
+  if(RL.bets[k])delete RL.bets[k]; else RL.bets[k]=RL.stake;
+  rlUpdateUI();
+}
+function rlToggle(t){
+  if(RL.bets[t])delete RL.bets[t]; else RL.bets[t]=RL.stake;
+  rlUpdateUI();
+}
+function rlSetStake(v,el){RL.stake=v;document.querySelectorAll('#screen-roulette .slot-bet-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('rl-custom').value='';}
+function rlCustom(inp){const v=parseInt(inp.value);if(v>0){RL.stake=v;document.querySelectorAll('#screen-roulette .slot-bet-btn').forEach(b=>b.classList.remove('active'));}}
+function rlAllIn(){if(!GS.balance)return;RL.stake=GS.balance;document.querySelectorAll('#screen-roulette .slot-bet-btn').forEach(b=>b.classList.remove('active'));document.getElementById('rl-custom').value=GS.balance;}
+function rlClear(){RL.bets={};rlUpdateUI();}
+function rlUpdateUI(){
+  // Outside buttons
+  ['red','black','zero','even','odd','low','high','d1','d2','d3','c1','c2','c3'].forEach(t=>{
+    const el=document.getElementById('rlb-'+t);if(el)el.classList.toggle('sel',!!RL.bets[t]);
+  });
+  // Number buttons
+  for(let n=0;n<=36;n++){const el=document.getElementById('rln-'+n);if(el)el.classList.toggle('sel',!!RL.bets['n'+n]);}
+  // Summary
+  const parts=[];
+  const names={red:'Czerwone',black:'Czarne',zero:'Zero',even:'Parzyste',odd:'Nieparzyste',low:'1-18',high:'19-36',d1:'1-12',d2:'13-24',d3:'25-36',c1:'Kol.1',c2:'Kol.2',c3:'Kol.3'};
+  Object.entries(RL.bets).forEach(([k,v])=>{
+    parts.push((k.startsWith('n')?'Nr '+k.slice(1):(names[k]||k))+':$'+v);
+  });
+  document.getElementById('rl-bets-summary').textContent=parts.join(' | ')||'Nic nie wybrano';
+}
+function rlCalcWin(n){
+  let ret=0;
+  const c=rlColor(n);
+  Object.entries(RL.bets).forEach(([k,s])=>{
+    let mult=0;
+    if(k==='n'+n) mult=36;
+    else if(k==='red'&&c==='r') mult=2;
+    else if(k==='black'&&c==='b') mult=2;
+    else if(k==='zero'&&n===0) mult=36;
+    else if(k==='even'&&n>0&&n%2===0) mult=2;
+    else if(k==='odd'&&n>0&&n%2!==0) mult=2;
+    else if(k==='low'&&n>=1&&n<=18) mult=2;
+    else if(k==='high'&&n>=19&&n<=36) mult=2;
+    else if(k==='d1'&&n>=1&&n<=12) mult=3;
+    else if(k==='d2'&&n>=13&&n<=24) mult=3;
+    else if(k==='d3'&&n>=25&&n<=36) mult=3;
+    else if(k==='c1'&&n>0&&n%3===1) mult=3;
+    else if(k==='c2'&&n>0&&n%3===2) mult=3;
+    else if(k==='c3'&&n>0&&n%3===0) mult=3;
+    if(mult>0) ret+=Math.floor(s*mult);
+  });
+  return ret;
+}
+function rlDrawWheel(hi){
+  const cv=document.getElementById('rouletteCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d'),cx=120,cy=120,R=115,n=RL_WHEEL.length,sl=(2*Math.PI)/n;
+  ctx.clearRect(0,0,240,240);
+  RL_WHEEL.forEach((num,i)=>{
+    const a=-Math.PI/2+i*sl,e=a+sl;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a,e);ctx.closePath();
+    const c=rlColor(num);
+    ctx.fillStyle=i===hi?'#f0d080':(c==='r'?'#b71c1c':c==='b'?'#1a1a1a':'#1b5e20');
+    ctx.fill();ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=0.5;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(a+sl/2);
+    ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font='bold 7px monospace';
+    ctx.fillText(num,R-3,3);ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(cx,cy,18,0,2*Math.PI);
+  ctx.fillStyle='#030d06';ctx.fill();
+  ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
+}
+async function rlSpin(){
+  if(RL.spinning)return;
+  const total=Object.values(RL.bets).reduce((a,b)=>a+b,0);
+  if(!total){document.getElementById('rl-status').textContent='Postaw co najmniej jeden zakład!';return;}
+  if(total>GS.balance){document.getElementById('rl-status').textContent='Niewystarczające saldo!';return;}
+  GS.balance-=total;updateGlobal();
+  RL.spinning=true;document.getElementById('rl-spin-btn').disabled=true;
+  const result=Math.floor(Math.random()*37);
+  const resIdx=RL_WHEEL.indexOf(result);
+  let cur=Math.floor(Math.random()*37);
+  for(let i=0;i<55;i++){cur=(cur+1)%37;rlDrawWheel(cur);await new Promise(r=>setTimeout(r,35+i*0.8));}
+  rlDrawWheel(resIdx);
+  const won=rlCalcWin(result);
+  const net=won-total;
+  GS.balance+=total; // restore pre-deducted bet before recordResult
+  if(GS.games.roulette)recordResult('roulette',net,net>0);
+  else{GS.balance+=net;GS.profit+=net;updateGlobal();}
+  const ce=rlColor(result)==='r'?'🔴':rlColor(result)==='b'?'⚫':'🟢';
+  const st=document.getElementById('rl-status');
+  st.textContent=won>0?`${ce} ${result} — Wygrałeś $${won}! Netto: +$${net}`:`${ce} ${result} — Przegrana -$${total}`;
+  st.style.color=net>0?'#27c76f':'#e03030';
+  RL.hist.unshift({n:result,c:rlColor(result),net});if(RL.hist.length>30)RL.hist.pop();
+  const hel=document.getElementById('rl-hist');hel.innerHTML='';
+  RL.hist.forEach(h=>{
+    const d=document.createElement('div');d.className='hist-dot '+(h.net>0?'W':'L');
+    d.style.background=h.c==='r'?'rgba(183,28,28,.3)':h.c==='b'?'rgba(30,30,30,.5)':'rgba(27,94,32,.3)';
+    d.style.borderColor=h.c==='r'?'#e53935':h.c==='b'?'#555':'#43a047';
+    d.style.color=h.c==='r'?'#ef9a9a':h.c==='b'?'#aaa':'#a5d6a7';
+    d.textContent=h.n;hel.appendChild(d);
+  });
+  RL.spinning=false;document.getElementById('rl-spin-btn').disabled=false;
+}
+function rlInit(){rlInitGrid();rlDrawWheel(-1);}
+
+// ═══════════════════════════════════════
+//  MINES
+// ═══════════════════════════════════════
+const MN_OPTS=[
+  {m:1.5,b:3,l:'3 miny'},{m:2,b:5,l:'5 min'},{m:3,b:9,l:'9 min'},{m:5,b:15,l:'15 min'},
+  {m:8,b:21,l:'21 min'},{m:12,b:27,l:'27 min'},{m:20,b:33,l:'33 miny'},{m:50,b:39,l:'39 min'}
+];
+let MN={bet:10,selOpt:1,active:false,board:[],revealed:[],safe:0,hist:[]};
+
+function mnInitGrid(){
+  const g=document.getElementById('mn-mult-grid');
+  if(!g||g.children.length)return;
+  MN_OPTS.forEach((o,i)=>{
+    const d=document.createElement('div');d.className='mn-mult';d.id='mno-'+i;
+    d.innerHTML=`<div class="mn-mult-v">${o.m}×</div><div class="mn-mult-l">${o.l}</div>`;
+    d.onclick=()=>mnSelOpt(i);g.appendChild(d);
+  });
+  mnSelOpt(1);
+}
+function mnSelOpt(i){
+  document.querySelectorAll('.mn-mult').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('mno-'+i).classList.add('sel');
+  MN.selOpt=i;
+}
+function mnSetBet(v,el){MN.bet=v;document.querySelectorAll('#mn-setup .slot-bet-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('mn-custom').value='';}
+function mnCustomBet(inp){const v=parseInt(inp.value);if(v>0){MN.bet=v;document.querySelectorAll('#mn-setup .slot-bet-btn').forEach(b=>b.classList.remove('active'));}}
+function mnAllIn(){if(!GS.balance)return;MN.bet=GS.balance;document.querySelectorAll('#mn-setup .slot-bet-btn').forEach(b=>b.classList.remove('active'));document.getElementById('mn-custom').value=GS.balance;}
+function mnStart(){
+  if(MN.bet>GS.balance){document.getElementById('mn-status').textContent='Niewystarczające saldo!';return;}
+  GS.balance-=MN.bet;updateGlobal();
+  const opt=MN_OPTS[MN.selOpt];
+  MN.board=new Array(81).fill('safe');
+  MN.revealed=new Array(81).fill(false);
+  MN.safe=0;MN.active=true;
+  // Place bombs randomly
+  const idx=[...Array(81).keys()];
+  for(let i=80;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}
+  idx.slice(0,opt.b).forEach(i=>MN.board[i]='bomb');
+  document.getElementById('mn-setup').style.display='none';
+  document.getElementById('mn-board-wrap').style.display='block';
+  document.getElementById('mn-bet-disp').textContent='$'+MN.bet;
+  document.getElementById('mn-bombs-disp').textContent=opt.b;
+  document.getElementById('mn-mult-disp').textContent='1.00×';
+  document.getElementById('mn-payout-disp').textContent='0';
+  document.getElementById('mn-stop-btn').disabled=true;
+  document.getElementById('mn-result').textContent='';
+  document.getElementById('mn-status').textContent='Kliknij pole — unikaj bomb! 💣';
+  document.getElementById('mn-status').style.color='#c9a84c';
+  mnRenderGrid();
+}
+function mnCurMult(){
+  const safe=81-MN_OPTS[MN.selOpt].b;
+  return Math.max(1,+(1+(MN.safe/safe)*(MN_OPTS[MN.selOpt].m-1)).toFixed(2));
+}
+function mnRenderGrid(){
+  const g=document.getElementById('mn-grid');g.innerHTML='';
+  for(let i=0;i<81;i++){
+    const c=document.createElement('div');c.className='mn-cell';c.id='mnc-'+i;
+    if(MN.revealed[i]){
+      c.classList.add(MN.board[i]==='bomb'?'bomb':'safe');
+      c.textContent=MN.board[i]==='bomb'?'💣':'💎';
+      c.classList.add('open');
+    } else {
+      c.onclick=()=>mnClick(i);
+    }
+    g.appendChild(c);
+  }
+}
+function mnClick(i){
+  if(!MN.active||MN.revealed[i])return;
+  MN.revealed[i]=true;
+  if(MN.board[i]==='bomb'){
+    MN.active=false;
+    for(let j=0;j<81;j++)if(MN.board[j]==='bomb')MN.revealed[j]=true;
+    mnRenderGrid();
+    document.getElementById('mn-stop-btn').disabled=true;
+    document.getElementById('mn-result').textContent='💥 BOOM! Straciłeś $'+MN.bet;
+    document.getElementById('mn-result').style.color='#e03030';
+    document.getElementById('mn-status').textContent='Trafiłeś na minę!';
+    document.getElementById('mn-status').style.color='#e03030';
+    GS.balance+=MN.bet; // restore
+    if(GS.games.mines)recordResult('mines',-MN.bet,false);
+    else{GS.balance+=0;GS.profit-=MN.bet;updateGlobal();}
+    MN.hist.unshift({r:'L',net:-MN.bet,m:mnCurMult()});mnRenderHist();
+    setTimeout(mnReset,2000);
+  } else {
+    MN.safe++;
+    const c=document.getElementById('mnc-'+i);
+    c.classList.add('safe','open');c.textContent='💎';c.onclick=null;
+    const mult=mnCurMult();
+    const pay=Math.floor(MN.bet*mult);
+    document.getElementById('mn-mult-disp').textContent=mult.toFixed(2)+'×';
+    document.getElementById('mn-payout-disp').textContent=pay;
+    if(MN.safe>=3)document.getElementById('mn-stop-btn').disabled=false;
+    document.getElementById('mn-status').textContent=`✅ ${MN.safe} pól bezpiecznie · mnożnik ${mult.toFixed(2)}×`;
+  }
+}
+function mnStop(){
+  if(!MN.active)return;
+  MN.active=false;
+  const mult=mnCurMult();
+  const pay=Math.floor(MN.bet*mult);
+  const net=pay-MN.bet;
+  GS.balance+=MN.bet; // restore pre-deducted bet
+  if(GS.games.mines)recordResult('mines',net,net>=0);
+  else{GS.balance+=net;GS.profit+=net;updateGlobal();}
+  for(let j=0;j<81;j++)if(MN.board[j]==='bomb')MN.revealed[j]=true;
+  mnRenderGrid();
+  document.getElementById('mn-stop-btn').disabled=true;
+  document.getElementById('mn-result').textContent=`💰 Wypłacono $${pay} · Netto: ${net>=0?'+':''}$${net}`;
+  document.getElementById('mn-result').style.color=net>=0?'#27c76f':'#e03030';
+  document.getElementById('mn-status').textContent='Gra skończona · mnożnik '+mult.toFixed(2)+'×';
+  MN.hist.unshift({r:net>=0?'W':'L',net,m:mult});mnRenderHist();
+  setTimeout(mnReset,2000);
+}
+function mnReset(){
+  MN.active=false;
+  document.getElementById('mn-setup').style.display='block';
+  document.getElementById('mn-board-wrap').style.display='none';
+  document.getElementById('mn-status').textContent='Wybierz mnożnik i zacznij grę';
+  document.getElementById('mn-status').style.color='#c9a84c';
+}
+function mnRenderHist(){
+  const h=document.getElementById('mn-hist');h.innerHTML='';
+  MN.hist.slice(0,25).forEach(e=>{
+    const d=document.createElement('div');d.className='hist-dot '+(e.r);
+    d.textContent=e.r;d.title=`${e.m.toFixed(2)}× Net:${e.net>=0?'+':''}$${e.net}`;h.appendChild(d);
+  });
+}
+// Patch switchScreen
+const _rlmnOrig=switchScreen;
+switchScreen=function(name,btn){
+  _rlmnOrig(name,btn);
+  if(name==='roulette'){rlInit();}
+  if(name==='mines'){mnInitGrid();}
+  if(name==='admin'&&currentUser==='admin')adminRender();
+};
+
 </script>
 </body>
 </html>
