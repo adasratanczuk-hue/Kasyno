@@ -1100,71 +1100,105 @@ canvas#balanceChart{width:100%;height:130px;}
 
 <script>
 // ═══════════════════════════════════════
-//  AUTH SYSTEM  (localStorage-based, per-device)
+//  SUPABASE CONFIG
 // ═══════════════════════════════════════
-let currentUser = null; // null = guest
+const SUPA_URL = 'https://fazlzysupyzldzdsjbrs.supabase.co';
+const SUPA_KEY = 'sb_publishable_-yKA8YC-N0P0yX9cuKtrWg_V9iXPwlM';
 
-function loginGetUsers(){
-  try{return JSON.parse(localStorage.getItem('rcUsers')||'{}');}catch{return{};}
+async function supaFetch(path, method='GET', body=null){
+  const opts = {
+    method,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'resolution=merge-duplicates,return=minimal' : ''
+    }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  const res = await fetch(SUPA_URL + path, opts);
+  if(res.status === 204 || res.status === 201) return null;
+  return res.json();
 }
-function loginSaveUsers(users){
-  localStorage.setItem('rcUsers',JSON.stringify(users));
+
+// ═══════════════════════════════════════
+//  AUTH SYSTEM  (Supabase cloud — works on all devices)
+// ═══════════════════════════════════════
+let currentUser = null;
+
+function loginHash(str){
+  let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h)^str.charCodeAt(i);return(h>>>0).toString(16);
 }
+function loginSetError(msg){ document.getElementById('login-error').textContent=msg; }
+function loginSetLoading(on){
+  const btn = document.querySelector('.login-btn');
+  btn.disabled = on;
+  btn.style.opacity = on ? '0.6' : '1';
+}
+
 function loginSwitchTab(tab){
   document.getElementById('tab-login').classList.toggle('active',tab==='login');
   document.getElementById('tab-register').classList.toggle('active',tab==='register');
-  document.getElementById('login-error').textContent='';
-  // swap button label
+  loginSetError('');
   document.querySelector('.login-btn').textContent=tab==='login'?'▶ WEJDŹ DO KASYNA':'✚ UTWÓRZ KONTO';
   document.querySelector('.login-btn').onclick = tab==='login' ? loginSubmit : registerSubmit;
   document.querySelector('[autocomplete="current-password"]').autocomplete = tab==='login'?'current-password':'new-password';
 }
-function loginHash(str){
-  // Simple hash (not cryptographic—this is a fun browser game)
-  let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h)^str.charCodeAt(i);return(h>>>0).toString(16);
-}
-function loginSubmit(){
+
+async function loginSubmit(){
   const u=document.getElementById('login-username').value.trim();
   const p=document.getElementById('login-password').value;
-  const err=document.getElementById('login-error');
-  if(!u||!p){err.textContent='Wypełnij wszystkie pola.';return;}
-  const users=loginGetUsers();
-  if(!users[u]){err.textContent='Nie znaleziono gracza. Zarejestruj się!';return;}
-  if(users[u].pw!==loginHash(p)){err.textContent='Błędne hasło.';return;}
-  err.textContent='';
-  loginEnter(u,users[u].save||null);
+  if(!u||!p){loginSetError('Wypełnij wszystkie pola.');return;}
+  loginSetLoading(true);
+  loginSetError('⏳ Logowanie...');
+  try{
+    const rows = await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(u)}&select=username,pw_hash,save_data`);
+    if(!rows||rows.length===0){loginSetError('Nie znaleziono gracza. Zarejestruj się!');loginSetLoading(false);return;}
+    const row = rows[0];
+    if(row.pw_hash !== loginHash(p)){loginSetError('Błędne hasło.');loginSetLoading(false);return;}
+    loginSetError('');
+    loginEnter(u, row.save_data||null);
+  }catch(e){loginSetError('Błąd połączenia. Spróbuj ponownie.');console.error(e);}
+  loginSetLoading(false);
 }
-function registerSubmit(){
+
+async function registerSubmit(){
   const u=document.getElementById('login-username').value.trim();
   const p=document.getElementById('login-password').value;
-  const err=document.getElementById('login-error');
-  if(!u||!p){err.textContent='Wypełnij wszystkie pola.';return;}
-  if(u.length<2){err.textContent='Nazwa musi mieć min. 2 znaki.';return;}
-  if(p.length<4){err.textContent='Hasło musi mieć min. 4 znaki.';return;}
-  const users=loginGetUsers();
-  if(users[u]){err.textContent='Ta nazwa jest już zajęta!';return;}
-  users[u]={pw:loginHash(p),save:null};
-  loginSaveUsers(users);
-  err.textContent='';
-  loginEnter(u,null);
+  if(!u||!p){loginSetError('Wypełnij wszystkie pola.');return;}
+  if(u.length<2){loginSetError('Nazwa musi mieć min. 2 znaki.');return;}
+  if(p.length<4){loginSetError('Hasło musi mieć min. 4 znaki.');return;}
+  loginSetLoading(true);
+  loginSetError('⏳ Tworzenie konta...');
+  try{
+    // Check if username taken
+    const check = await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(u)}&select=username`);
+    if(check&&check.length>0){loginSetError('Ta nazwa jest już zajęta!');loginSetLoading(false);return;}
+    // Insert new player
+    await supaFetch('/rest/v1/players', 'POST', {username:u, pw_hash:loginHash(p), save_data:null});
+    loginSetError('');
+    loginEnter(u, null);
+  }catch(e){loginSetError('Błąd rejestracji. Spróbuj ponownie.');console.error(e);}
+  loginSetLoading(false);
 }
+
 function loginGuest(){
   loginEnter(null,null);
 }
-function loginEnter(username,savedState){
-  currentUser=username;
+
+function loginEnter(username, savedState){
+  currentUser = username;
   document.getElementById('login-screen').style.display='none';
   document.getElementById('main-app').style.display='flex';
-  // Show/hide admin nav
   const isAdmin = username === 'admin';
   document.getElementById('nav-admin').style.display = isAdmin ? '' : 'none';
   if(isAdmin) adminRender();
-  document.getElementById('user-name').textContent=name;
-  document.getElementById('user-avatar').textContent=name[0].toUpperCase();
-  // Load per-user save if available
+  const displayName = username || 'Gość';
+  document.getElementById('user-name').textContent = displayName;
+  document.getElementById('user-avatar').textContent = displayName[0].toUpperCase();
   if(savedState){
     try{
-      const s=savedState;
+      const s = typeof savedState === 'string' ? JSON.parse(savedState) : savedState;
       GS.balance=s.balance||1000;GS.startBalance=s.startBalance||1000;
       GS.profit=s.profit||0;GS.balanceHistory=s.balanceHistory||[GS.balance];
       GS.totalRoundsPlayed=s.totalRoundsPlayed||0;GS.sessionStart=s.sessionStart||Date.now();
@@ -1175,16 +1209,16 @@ function loginEnter(username,savedState){
       if(s.slotDetail)GS.slotDetail={...GS.slotDetail,...s.slotDetail};
       if(s.pokerDetail)GS.pokerDetail={...GS.pokerDetail,...s.pokerDetail};
       if(s.plinkoDetail&&s.plinkoDetail.bucketHits)GS.plinkoDetail.bucketHits=s.plinkoDetail.bucketHits;
-    }catch(e){}
+    }catch(e){console.warn('Load save failed',e);}
   }
   updateGlobal();bjSyncStakes();
   document.getElementById('bj-pause-btn').disabled=true;
   document.getElementById('bj-start-btn').textContent='▶ ROZDAJ KARTY';
   document.getElementById('bj-start-btn').disabled=false;
-  document.getElementById('bj-clear-btn').disabled=true;
-  document.querySelectorAll('#screen-bj .market-btn').forEach(e=>e.setAttribute('disabled',''));
-  document.querySelectorAll('#screen-bj .chip').forEach(e=>e.setAttribute('disabled',''));
-  bjSetStatus('Naciśnij ROZDAJ KARTY — zakłady po rozdaniu','idle');
+  document.getElementById('bj-clear-btn').disabled=false;
+  document.querySelectorAll('#screen-bj .market-btn').forEach(e=>e.removeAttribute('disabled'));
+  document.querySelectorAll('#screen-bj .chip').forEach(e=>e.removeAttribute('disabled'));
+  bjSetStatus('Obstaw zakłady i naciśnij ROZDAJ KARTY','idle');
   plinkoRenderBuckets();
   setTimeout(()=>{
     const canvas=document.getElementById('plinkoCanvas');
@@ -1201,10 +1235,10 @@ function loginEnter(username,savedState){
     }
   },150);
 }
+
 function loginLogout(){
   if(!confirm(currentUser?`Wylogować się (${currentUser})?`:'Wyjść z trybu gościa?'))return;
   currentUser=null;
-  // Reset GS
   GS.balance=1000;GS.profit=0;GS.startBalance=1000;GS.balanceHistory=[1000];
   GS.totalRoundsPlayed=0;GS.sessionStart=Date.now();
   Object.keys(GS.games).forEach(k=>{GS.games[k]={rounds:0,won:0,profit:0,totalBet:0,totalPayout:0};});
@@ -1216,10 +1250,10 @@ function loginLogout(){
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('login-username').value='';
   document.getElementById('login-password').value='';
-  document.getElementById('login-error').textContent='';
+  loginSetError('');
   loginSwitchTab('login');
 }
-// Override saveState to also save per-user
+// saveState syncs to Supabase cloud
 
 const GS = {
   balance: 1000,
@@ -1247,7 +1281,7 @@ const GS = {
 };
 
 function saveState(){
-  if(!currentUser)return; // guest: no persistence
+  if(!currentUser)return;
   try{
     const save={
       balance:GS.balance,startBalance:GS.startBalance,profit:GS.profit,
@@ -1259,12 +1293,14 @@ function saveState(){
       totalRoundsPlayed:GS.totalRoundsPlayed,
       sessionStart:GS.sessionStart
     };
-    const users=loginGetUsers();
-    if(users[currentUser]){users[currentUser].save=save;loginSaveUsers(users);}
+    // Fire-and-forget PATCH to Supabase
+    supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(currentUser)}`, 'PATCH', {save_data: save})
+      .catch(e=>console.warn('Save failed',e));
   }catch(e){}
 }
 
 function loadState(){
+  // Legacy localStorage load (no longer used for cloud accounts)
   try{
     const raw=localStorage.getItem('royalCasinoSave');
     if(!raw)return;
@@ -1275,7 +1311,6 @@ function loadState(){
     GS.balanceHistory=save.balanceHistory||[GS.balance];
     GS.totalRoundsPlayed=save.totalRoundsPlayed||0;
     GS.sessionStart=save.sessionStart||Date.now();
-    // Merge games
     if(save.games)Object.keys(GS.games).forEach(k=>{
       if(save.games[k])GS.games[k]={...GS.games[k],...save.games[k]};
     });
