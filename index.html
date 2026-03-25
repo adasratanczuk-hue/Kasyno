@@ -1118,7 +1118,12 @@ async function supaFetch(path, method='GET', body=null){
   if(body) opts.body = JSON.stringify(body);
   const res = await fetch(SUPA_URL + path, opts);
   if(res.status === 204 || res.status === 201) return null;
-  return res.json();
+  const data = await res.json();
+  if(!res.ok){
+    console.error('Supabase error', res.status, JSON.stringify(data));
+    throw new Error(data.message||data.error||data.hint||JSON.stringify(data));
+  }
+  return data;
 }
 
 // ═══════════════════════════════════════
@@ -1158,7 +1163,7 @@ async function loginSubmit(){
     if(row.pw_hash !== loginHash(p)){loginSetError('Błędne hasło.');loginSetLoading(false);return;}
     loginSetError('');
     loginEnter(u, row.save_data||null);
-  }catch(e){loginSetError('Błąd połączenia. Spróbuj ponownie.');console.error(e);}
+  }catch(e){loginSetError('Błąd: '+e.message);console.error(e);}
   loginSetLoading(false);
 }
 
@@ -1178,7 +1183,7 @@ async function registerSubmit(){
     await supaFetch('/rest/v1/players', 'POST', {username:u, pw_hash:loginHash(p), save_data:null});
     loginSetError('');
     loginEnter(u, null);
-  }catch(e){loginSetError('Błąd rejestracji. Spróbuj ponownie.');console.error(e);}
+  }catch(e){loginSetError('Błąd: '+e.message);console.error(e);}
   loginSetLoading(false);
 }
 
@@ -2358,36 +2363,40 @@ function resetBalance(){
 // ═══════════════════════════════════════
 //  ADMIN PANEL
 // ═══════════════════════════════════════
-function adminRender(){
+async function adminRender(){
   const wrap=document.getElementById('admin-user-list');
-  wrap.innerHTML='';
-  const users=loginGetUsers();
-  const entries=Object.entries(users).filter(([u])=>u!=='admin');
-  if(!entries.length){
-    wrap.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:.58rem;padding:20px">Brak zarejestrowanych graczy</div>';
-    return;
-  }
-  entries.forEach(([username,data])=>{
-    const bal=data.save?data.save.balance:1000;
-    const rounds=data.save?data.save.totalRoundsPlayed||0:0;
-    const profit=data.save?data.save.profit||0:0;
-    const card=document.createElement('div');
-    card.className='admin-card';
-    card.innerHTML=`
-      <div class="admin-card-header">
-        <div class="admin-username">👤 ${username}</div>
-        <div class="admin-balance">$${bal}</div>
-      </div>
-      <div class="admin-stat">Rundy: ${rounds} &nbsp;|&nbsp; Zysk: ${profit>=0?'+':''}$${profit}</div>
-      <div class="admin-actions" style="margin-top:10px">
-        <input class="admin-input" type="number" id="adm-inp-${username}" placeholder="Kwota" min="1">
-        <button class="admin-btn give" onclick="adminGive('${username}')">+ Daj $</button>
-        <button class="admin-btn take" onclick="adminTake('${username}')">- Zabierz $</button>
-        <button class="admin-btn reset" onclick="adminResetBalance('${username}')">↺ Reset</button>
-        <button class="admin-btn del" onclick="adminDelete('${username}')">🗑 Usuń</button>
-      </div>`;
-    wrap.appendChild(card);
-  });
+  wrap.innerHTML='<div style="text-align:center;color:rgba(201,168,76,.4);font-size:.58rem;padding:20px">⏳ Ładowanie...</div>';
+  try{
+    const rows=await supaFetch('/rest/v1/players?username=neq.admin&select=username,save_data&order=username');
+    wrap.innerHTML='';
+    if(!rows||!rows.length){
+      wrap.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:.58rem;padding:20px">Brak zarejestrowanych graczy</div>';
+      return;
+    }
+    rows.forEach(row=>{
+      const username=row.username;
+      const s=row.save_data;
+      const bal=s?s.balance:1000;
+      const rounds=s?s.totalRoundsPlayed||0:0;
+      const profit=s?s.profit||0:0;
+      const card=document.createElement('div');
+      card.className='admin-card';
+      card.innerHTML=`
+        <div class="admin-card-header">
+          <div class="admin-username">👤 ${username}</div>
+          <div class="admin-balance">$${bal}</div>
+        </div>
+        <div class="admin-stat">Rundy: ${rounds} &nbsp;|&nbsp; Zysk: ${profit>=0?'+':''}$${profit}</div>
+        <div class="admin-actions" style="margin-top:10px">
+          <input class="admin-input" type="number" id="adm-inp-${username}" placeholder="Kwota" min="1">
+          <button class="admin-btn give" onclick="adminGive('${username}')">+ Daj $</button>
+          <button class="admin-btn take" onclick="adminTake('${username}')">- Zabierz $</button>
+          <button class="admin-btn reset" onclick="adminResetBalance('${username}')">↺ Reset</button>
+          <button class="admin-btn del" onclick="adminDelete('${username}')">🗑 Usuń</button>
+        </div>`;
+      wrap.appendChild(card);
+    });
+  }catch(e){wrap.innerHTML='<div style="color:#e03030;padding:10px;font-size:.6rem">Błąd: '+e.message+'</div>';}
 }
 
 function adminGetAmt(username){
@@ -2396,44 +2405,48 @@ function adminGetAmt(username){
   return v;
 }
 
-function adminGive(username){
+async function adminGive(username){
   const amt=adminGetAmt(username);if(!amt)return;
-  const users=loginGetUsers();
-  if(!users[username])return;
-  if(!users[username].save)users[username].save={balance:1000,startBalance:1000,profit:0,balanceHistory:[1000],games:{bj:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},slots:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},crash:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0},plinko:{rounds:0,won:0,profit:0,totalBet:0,totalPayout:0}},streaks:{cur:0,best:0,worstLose:0,curLose:0,biggestWin:0,biggestLoss:0},bjDetail:{bjPlayer:0,bjDealer:0,bjAny:0,bustPlayer:0,bustDealer:0,playerWins:0,dealerWins:0,pushes:0,handValues:{},dealerUpCards:{},winningCards:{}},crashHist:{u15:0,u2:0,u3:0,u5:0,u10:0,u10p:0,totalCashout:0,cashoutCount:0,biggestMult:0},slotDetail:{bySymbol:{}},pokerDetail:{hands:{}},plinkoDetail:{bucketHits:new Array(11).fill(0)},totalRoundsPlayed:0,sessionStart:Date.now()};
-  users[username].save.balance+=amt;
-  loginSaveUsers(users);
-  adminRender();
+  try{
+    const rows=await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}&select=save_data`);
+    if(!rows||!rows.length)return;
+    const s=rows[0].save_data||{balance:1000,profit:0,totalRoundsPlayed:0};
+    s.balance=(s.balance||1000)+amt;
+    await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}`,'PATCH',{save_data:s});
+    adminRender();
+  }catch(e){alert('Błąd: '+e.message);}
 }
 
-function adminTake(username){
+async function adminTake(username){
   const amt=adminGetAmt(username);if(!amt)return;
-  const users=loginGetUsers();
-  if(!users[username]||!users[username].save)return;
-  users[username].save.balance=Math.max(0,users[username].save.balance-amt);
-  loginSaveUsers(users);
-  adminRender();
+  try{
+    const rows=await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}&select=save_data`);
+    if(!rows||!rows.length)return;
+    const s=rows[0].save_data||{balance:1000};
+    s.balance=Math.max(0,(s.balance||1000)-amt);
+    await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}`,'PATCH',{save_data:s});
+    adminRender();
+  }catch(e){alert('Błąd: '+e.message);}
 }
 
-function adminResetBalance(username){
+async function adminResetBalance(username){
   if(!confirm(`Zresetować saldo ${username} do $1000?`))return;
-  const users=loginGetUsers();
-  if(!users[username])return;
-  if(!users[username].save)users[username].save={};
-  users[username].save.balance=1000;
-  users[username].save.startBalance=1000;
-  users[username].save.profit=0;
-  users[username].save.balanceHistory=[1000];
-  loginSaveUsers(users);
-  adminRender();
+  try{
+    const rows=await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}&select=save_data`);
+    if(!rows||!rows.length)return;
+    const s=rows[0].save_data||{};
+    s.balance=1000;s.startBalance=1000;s.profit=0;s.balanceHistory=[1000];
+    await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}`,'PATCH',{save_data:s});
+    adminRender();
+  }catch(e){alert('Błąd: '+e.message);}
 }
 
-function adminDelete(username){
+async function adminDelete(username){
   if(!confirm(`Usunąć konto ${username}? Tej operacji nie można cofnąć!`))return;
-  const users=loginGetUsers();
-  delete users[username];
-  loginSaveUsers(users);
-  adminRender();
+  try{
+    await supaFetch(`/rest/v1/players?username=eq.${encodeURIComponent(username)}`,'DELETE');
+    adminRender();
+  }catch(e){alert('Błąd: '+e.message);}
 }
 
 // Admin re-render now handled in the combined switchScreen override below
@@ -2441,13 +2454,15 @@ function adminDelete(username){
 // ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
-// Seed admin account if not exists
-(function seedAdmin(){
-  const users=loginGetUsers();
-  if(!users['admin']){
-    users['admin']={pw:loginHash('passw0rd'),save:null,isAdmin:true};
-    loginSaveUsers(users);
-  }
+// Seed admin account in Supabase if not exists
+(async function seedAdmin(){
+  try{
+    const rows=await supaFetch('/rest/v1/players?username=eq.admin&select=username');
+    if(!rows||rows.length===0){
+      await supaFetch('/rest/v1/players','POST',{username:'admin',pw_hash:loginHash('passw0rd'),save_data:null});
+      console.log('Admin account created');
+    }
+  }catch(e){console.warn('seedAdmin failed',e);}
 })();
 
 BJ.deck=bjBuildDecks(6);
@@ -2716,8 +2731,9 @@ function mnRenderHist(){
 const _rlmnOrig=switchScreen;
 switchScreen=function(name,btn){
   _rlmnOrig(name,btn);
-  if(name==='roulette'){rlInit();}
-  if(name==='mines'){mnInitGrid();}
+  // Use requestAnimationFrame so screen is visible before canvas draw
+  if(name==='roulette'){requestAnimationFrame(()=>rlInit());}
+  if(name==='mines'){requestAnimationFrame(()=>mnInitGrid());}
   if(name==='admin'&&currentUser==='admin')adminRender();
 };
 
